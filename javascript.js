@@ -53,7 +53,7 @@ function inputData(key, value) {
   newData[key] = value;
 }
 
-//新增套票資料功能
+//[使用者行為]新增套票資料功能
 function addData() {
   if (Object.values(newData).every(value => value)) {
     data.push(newData);
@@ -68,7 +68,7 @@ function addData() {
       "price": 0,
       "rate": 0
     };
-    console.log(data);
+
     const form = document.querySelector(".addTicket-form");
     if (form) {
       form.reset();
@@ -84,15 +84,35 @@ function addData() {
 //本次搜尋共 ? 筆資料
 let searchResult;
 
-//下頁的行程小卡
-function ticketCard(area) {
+let ticketCards = document.querySelector(".ticketCard-area");
+//[網頁渲染行為]上頁新增旅遊套票時，所有可選的景點地區
+function renderTicketRegion() {
+  let ticketRegion = document.querySelector("#ticketRegion");
+  let str = ` <option
+                value=''
+                disabled
+                selected
+                hidden>
+                請選擇景點地區
+              </option>`;
+  let content;
+  //
+  areas.forEach(area => {
+    content = `<option value=${area}>${area}</option>`;
+    str += content;
+  });
+  ticketRegion.innerHTML = str;
+}
+
+//[網頁渲染行為]搜尋下頁的行程小卡
+function renderTicketCard(area) {
   searchResult = 0;
-  let ticketCards = document.querySelector(".ticketCard-area");
+
   let str = "";
   let content;
 
   data.forEach(data => {
-    if (area == data.area || area == "") {
+    if (area === data.area || area === "") {
       searchResult++;
       content = ` <li class="ticketCard">
           <div class="ticketCard-img">
@@ -136,30 +156,72 @@ function ticketCard(area) {
   });
 
   ticketCards.innerHTML = str;
-
   document.querySelector(
     "#searchResult-text"
-  ).innerText = `本次搜尋共 ${searchResult} 筆資料`;
+  ).textContent = `本次搜尋共 ${searchResult} 筆資料`;
 }
 
-//所有景點地區
-function ticketRegion() {
-  let ticketRegion = document.querySelector("#ticketRegion");
-  let str = ` <option
-                value=''
-                disabled
-                selected
-                hidden>
-                請選擇景點地區
-              </option>`;
+//[網頁渲染行為]下頁預設渲染所有行程
+function initTicketCardArea() {
+  let str = "";
   let content;
-  //
-  areas.forEach(area => {
-    content = `<option value=${area}>${area}</option>`;
+
+  data.forEach(data => {
+    content = ` <li class="ticketCard">
+          <div class="ticketCard-img">
+            <a href="#">
+              <img
+                src=${data.imgUrl}
+                alt="" />
+            </a>
+            <div class="ticketCard-region">${data.area}</div>
+            <div class="ticketCard-rank">${data.rate}</div>
+          </div>
+          <div class="ticketCard-content">
+            <div>
+              <h3>
+                <a
+                  href="#"
+                  class="ticketCard-name"
+                >${data.name}</a
+                >
+              </h3>
+              <p class="ticketCard-description">
+               ${data.description}
+              </p>
+            </div>
+            <div class="ticketCard-info">
+              <p class="ticketCard-num">
+                <span><i class="fas fa-exclamation-circle"></i></span>
+                剩下最後 <span id="ticketCard-num"> ${data.group} </span> 組
+              </p>
+              <p class="ticketCard-price">
+                TWD <span id="ticketCard-price">${data.price}</span>
+              </p>
+            </div>
+          </div>
+        </li>`;
     str += content;
   });
-  ticketRegion.innerHTML = str;
+
+  ticketCards.innerHTML = str;
+  document.querySelector(
+    "#searchResult-text"
+  ).textContent = `本次搜尋共 ${data.length} 筆資料`;
 }
 
-ticketCard();
-ticketRegion();
+//[事件監聽器]上頁使用者新增套票
+document.querySelector(".addTicket-btn").addEventListener("click", function () {
+  addData();
+});
+
+//[事件監聽器]下頁搜尋地區
+document.querySelector(".regionSearch").addEventListener("change", function () {
+  renderTicketCard(this.value);
+});
+
+initTicketCardArea();
+renderTicketRegion();
+
+//https://rpg.hexschool.com/#/training/12062817613357131945/board/content/12062817613357131946_12062817613357131967
+//待修正：上頁的  input，不要用 onInput，改為 addEventListener
