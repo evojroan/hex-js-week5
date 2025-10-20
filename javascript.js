@@ -1,45 +1,32 @@
-let data = [
-  {
-    "id": 0,
-    "name": "肥宅心碎賞櫻3日",
-    "imgUrl":
-      "https://images.unsplash.com/photo-1522383225653-ed111181a951?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1655&q=80",
-    "area": "高雄",
-    "description": "賞櫻花最佳去處。肥宅不得不去的超讚景點！",
-    "group": 87,
-    "price": 1400,
-    "rate": 10
-  },
-  {
-    "id": 1,
-    "name": "貓空纜車雙程票",
-    "imgUrl":
-      "https://images.unsplash.com/photo-1501393152198-34b240415948?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80",
-    "area": "台北",
-    "description":
-      "乘坐以透明強化玻璃為地板的「貓纜之眼」水晶車廂，享受騰雲駕霧遨遊天際之感",
-    "group": 99,
-    "price": 240,
-    "rate": 2
-  },
-  {
-    "id": 2,
-    "name": "台中谷關溫泉會1日",
-    "imgUrl":
-      "https://images.unsplash.com/photo-1535530992830-e25d07cfa780?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80",
-    "area": "台中",
-    "description":
-      "全館客房均提供谷關無色無味之優質碳酸原湯，並取用八仙山之山冷泉供蒞臨貴賓沐浴及飲水使用。",
-    "group": 20,
-    "price": 1765,
-    "rate": 7
-  }
+let apiurl =
+  "https://raw.githubusercontent.com/hexschool/js-training/main/travelApi.json";
+let data = [];
+
+let areas = [
+  "基隆",
+  "台北",
+  "新北",
+  "桃園",
+  "新竹",
+  "苗栗",
+  "台中",
+  "南投",
+  "彰化",
+  "雲林",
+  "嘉義",
+  "台南",
+  "高雄",
+  "屏東",
+  "宜蘭",
+  "花蓮",
+  "台東",
+  "澎湖",
+  "金門",
+  "連江"
 ];
 
-let areas = ["基隆", "台北", "新北", "桃園", "新竹", "苗栗", "台中", "南投", "彰化", "雲林", "嘉義", "台南", "高雄", "屏東", "宜蘭", "花蓮", "台東", "澎湖", "金門", "連江"]
-
 let newData = {
-  "id": data.length,
+  "id": 1,
   "name": false,
   "imgUrl": false,
   "area": false,
@@ -50,7 +37,9 @@ let newData = {
 };
 
 //[使用者行為]上頁輸入套票資料
-let allInputs = document.querySelectorAll("#ticketName, #ticketImgUrl,#ticketRegion, #ticketPrice, #ticketNum, #ticketRate, #ticketDescription")
+let allInputs = document.querySelectorAll(
+  "#ticketName, #ticketImgUrl,#ticketRegion, #ticketPrice, #ticketNum, #ticketRate, #ticketDescription"
+);
 
 function inputData(id, value) {
   switch (id) {
@@ -90,19 +79,23 @@ allInputs.forEach(input => {
       } else if (value !== "" && Number(value) < 1) {
         value = "1";
         input.value = "1";
+      } else {
+        value = Math.round(value);
+        input.value = Math.round(value);
       }
-      else { value = Math.round(value); input.value = Math.round(value) }
     }
     inputData(input.id, value);
-  })
-})
-
+  });
+});
 
 //[使用者行為]上頁使用者按按鈕，新增套票
 function addData() {
-
+  
   if (Object.values(newData).every(value => value)) {
     data.push(newData);
+
+    data[data.length - 1]["id"] = data.length - 1;
+   
     alert("新增套票資料成功");
     newData = {
       "id": data.length,
@@ -121,7 +114,7 @@ function addData() {
     }
     // 重置搜尋選項為全部地區
     document.querySelector(".regionSearch").value = "";
-    renderTicketCard("")
+    renderTicketCard("");
   } else {
     alert("請輸入完所有套票資料再送出");
   }
@@ -153,26 +146,26 @@ function renderTicketRegion() {
 
 //[網頁渲染行為]下頁地區搜尋，所有的搜尋選項
 function renderAreaSearchOptions() {
-  let str = `<option value="">所有地區</option>`
+  let str = `<option value="">所有地區</option>`;
   let content;
   areas.forEach(checkedArea => {
-    content = `<option value=${checkedArea}>${checkedArea}</option>`
-    str += content
-  })
+    content = `<option value=${checkedArea}>${checkedArea}</option>`;
+    str += content;
+  });
 
-  document.querySelector(".regionSearch").innerHTML = str
+  document.querySelector(".regionSearch").innerHTML = str;
 }
 
 //[網頁渲染行為]搜尋下頁的行程小卡
-function renderTicketCard(area) { 
-        searchResult = 0;
-        let str = "";
-        let content;
+function renderTicketCard(area) {
+  searchResult = 0;
+  let str = "";
+  let content;
 
-        data.forEach(data => {
-          if (area === data.area || area === "") {
-            searchResult++;
-            content = ` <li class="ticketCard">
+  data.forEach(data => {
+    if (area === data.area || area === "") {
+      searchResult++;
+      content = ` <li class="ticketCard">
           <div class="ticketCard-img">
             <a href="#">
               <img
@@ -206,27 +199,26 @@ function renderTicketCard(area) {
             </div>
           </div>
         </li>`;
-          } else {
-            content = "";
-          }
+    } else {
+      content = "";
+    }
 
-          str += content;
-        });
+    str += content;
+  });
 
-        ticketCards.innerHTML = str;
+  ticketCards.innerHTML = str;
 
-        document.querySelector(
-          "#searchResult-text"
-        ).textContent = `本次搜尋共 ${searchResult} 筆資料`;
+  document.querySelector(
+    "#searchResult-text"
+  ).textContent = `本次搜尋共 ${searchResult} 筆資料`;
 
-  if(searchResult===0){
-         document.querySelector(
-          "#searchResult-text"
-        ).textContent = `本次搜尋共 0 筆資料`;
-       ticketCards.innerHTML = `<div class='cantFind-area'><h3>查無此關鍵字資料</h3><img src='https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/no_found.png?raw=true' alt=''/></div>`
-      }
-      
+  if (searchResult === 0) {
+    document.querySelector(
+      "#searchResult-text"
+    ).textContent = `本次搜尋共 0 筆資料`;
+    ticketCards.innerHTML = `<div class='cantFind-area'><h3>查無此關鍵字資料</h3><img src='https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/no_found.png?raw=true' alt=''/></div>`;
   }
+}
 
 //[網頁渲染行為]下頁預設渲染所有行程
 function initTicketCardArea() {
@@ -287,6 +279,15 @@ document.querySelector(".regionSearch").addEventListener("change", function () {
   renderTicketCard(this.value);
 });
 
-initTicketCardArea();
-renderTicketRegion();
-renderAreaSearchOptions()
+axios
+  .get(apiurl)
+  .then(response => {
+    response.data.data.forEach(item => {
+      data.push(item);
+    });
+
+    initTicketCardArea();
+    renderTicketRegion();
+    renderAreaSearchOptions();
+  })
+  .catch(error => console.error("API 請求失敗", error));
