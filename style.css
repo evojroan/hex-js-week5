@@ -430,7 +430,7 @@ body {
 }
 
 .cantFind-area {
-  display: none;
+  /* display: none; */
   margin-top: 70px;
   text-align: center;
 }
