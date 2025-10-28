@@ -245,6 +245,7 @@ body {
   align-items: center;
   max-width: 920px;
   margin: 0 auto;
+
   padding: 50px 0;
 }
 
@@ -273,6 +274,22 @@ body {
   border: 1px solid #ced4da;
   border-radius: 5px;
   margin-right: 2.5%;
+}
+
+#donutChart {
+  height: 160px;
+  width: 160px;
+  /* position: relative;
+  right: 0; */
+  margin-left: auto;
+}
+
+#donutChart .c3-legend-item text {
+  font-size: 8px;
+}
+
+#donutChart .c3-chart-arcs-title {
+  font-size: 12px; /* 依需求調整 */
 }
 
 @media (max-width: 768px) {

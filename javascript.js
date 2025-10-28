@@ -1,5 +1,5 @@
 let apiurl =
-  "https://raw.githubusercontent.com/hexschool/js-training/main/travelApi.json";
+  "https://raw.githubusercontent.com/hexschool/js-training/main/travelAPI-lv1.json";
 let data = [];
 
 let areas = [
@@ -90,12 +90,11 @@ allInputs.forEach(input => {
 
 //[使用者行為]上頁使用者按按鈕，新增套票
 function addData() {
-  
   if (Object.values(newData).every(value => value)) {
     data.push(newData);
 
     data[data.length - 1]["id"] = data.length - 1;
-   
+
     alert("新增套票資料成功");
     newData = {
       "id": data.length,
@@ -269,9 +268,54 @@ function initTicketCardArea() {
   ).textContent = `本次搜尋共 ${data.length} 筆資料`;
 }
 
+//[網頁行為] 取得列 data 後，統計地區數量，以供 function collectAreas 使用
+// function data2AreaArray ( data ) {
+//   let outputArray=[]
+
+//   data.forEach( obj => { } )
+
+// }
+
+//[網頁功能]收集並統計所有地區，以供 donutChart 使用
+function collectAreas(data) {
+  let array1 = [];
+  data.forEach(obj => {
+    array1.push(obj.area);
+  });
+
+  let totalObj = {};
+  array1.forEach(item => {
+    totalObj[item] = (totalObj[item] || 0) + 1;
+  });
+
+  return Object.entries(totalObj);
+}
+
+//[網頁渲染行為]以搜尋地區繪製 donutChart
+let donutChart = c3.generate({
+  bindto: "#donutChart",
+  data: {
+    columns: collectAreas(data),
+    type: "donut"
+  },
+  donut: {
+    title: "套票地區比重",
+    label: {
+      show: false
+    },
+    width: 10
+  },
+
+  legend: {
+    show: true
+  }
+});
+
 //[事件監聽器]上頁使用者按按鈕，新增套票
 document.querySelector(".addTicket-btn").addEventListener("click", function () {
   addData();
+  collectAreas(data);
+  donutChart.load({columns: collectAreas(data)});
 });
 
 //[事件監聽器]下頁搜尋地區
@@ -282,12 +326,15 @@ document.querySelector(".regionSearch").addEventListener("change", function () {
 axios
   .get(apiurl)
   .then(response => {
-    response.data.data.forEach(item => {
+    response.data.forEach(item => {
       data.push(item);
     });
 
     initTicketCardArea();
     renderTicketRegion();
     renderAreaSearchOptions();
+    collectAreas(data);
+
+    donutChart.load({columns: collectAreas(data)});
   })
   .catch(error => console.error("API 請求失敗", error));
